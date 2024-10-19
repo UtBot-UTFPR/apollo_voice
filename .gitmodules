@@ -1,12 +1,12 @@
 [submodule "display_emotions"]
 	path = display_emotions
 	url = https://github.com/UtBotsAtHome-UTFPR/display_emotions.git
-[submodule "utbots_stt/whisper_cpp_ros/whisper.cpp"]
-	path = utbots_stt/whisper_cpp_ros/whisper.cpp
-	url = https://github.com/ggerganov/whisper.cpp.git
 [submodule "utbots_nlu"]
 	path = utbots_nlu
 	url = https://github.com/UtBotsAtHome-UTFPR/utbots_nlu
 [submodule "utbots_stt/vad_silero_ros/rnnoise"]
 	path = utbots_stt/vad_silero_ros/rnnoise
 	url = https://github.com/xiph/rnnoise.git
+[submodule "utbots_stt/whisper_cpp_ros/whisper.cpp"]
+	path = utbots_stt/whisper_cpp_ros/whisper.cpp
+	url = https://github.com/ggerganov/whisper.cpp.git
