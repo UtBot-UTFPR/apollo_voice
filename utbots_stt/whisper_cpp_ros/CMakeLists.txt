@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(whisper_cpp_ros)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+# add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
@@ -14,9 +14,14 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package()
+## Set CUDA flag for whisper.cpp
+set(GGML_CUDA 1 CACHE BOOL "Enable GGML CUDA support")
+
+# set(WHISPER_CUDA_FLAG "-DGGML_CUDA=1")
 
 add_subdirectory(whisper.cpp)
 
+# set_target_properties(whisper PROPERTIES COMPILE_DEFINITIONS ${WHISPER_CUDA_FLAG})
 ## Specify additional locations of header files (your package locations should be listed before other locations)
 include_directories(whisper.cpp/examples/ ${catkin_INCLUDE_DIRS})
 

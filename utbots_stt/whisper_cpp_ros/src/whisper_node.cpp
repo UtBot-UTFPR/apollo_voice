@@ -30,7 +30,12 @@ typedef struct parameters {
     // Other parameters
     bool print_timings = false;
     bool show_result = true;
+
+    //whisper main cparams: (need for context)
+    bool use_gpu = true;
+    bool flash_attn = true;
 } parameters;
+
 
 class WhisperNode
 {
@@ -44,6 +49,11 @@ class WhisperNode
     ros::NodeHandle nh;
     ros::Subscriber sub_audio_data = nh.subscribe("/utbots/voice/stt/voice_signal", 10, &WhisperNode::CallbackAudioData, this);
     ros::Publisher  pub_output_text = nh.advertise<std_msgs::String>("/utbots/voice/stt/whispered", 1);
+    struct whisper_context_params cparams = whisper_context_default_params();
+
+
+
+
 
     public:
         // Constructor
@@ -76,6 +86,8 @@ class WhisperNode
             nh.getParam("/utbots/voice/stt/whisper_node/model",           params.model);
             nh.getParam("/utbots/voice/stt/whisper_node/print_timings",   params.print_timings);
             nh.getParam("/utbots/voice/stt/whisper_node/show_result",     params.show_result);
+            nh.getParam("/utbots/voice/stt/whisper_node/use_gpu",   params.use_gpu);
+            nh.getParam("/utbots/voice/stt/whisper_node/flash_attn",     params.flash_attn);
 
             ROS_INFO("[WHISPER] PARAMETERS");
             ROS_INFO("[WHISPER]   - offset_t_ms: %d",       params.offset_t_ms);
@@ -91,13 +103,18 @@ class WhisperNode
             ROS_INFO("[WHISPER]   - language: %s",          params.language.c_str());
             ROS_INFO("[WHISPER]   - model: %s",             params.model.c_str());
             ROS_INFO("[WHISPER]   - show_result: %d\n",     params.show_result);
+
+            cparams.use_gpu    = params.use_gpu;
+            cparams.flash_attn = params.flash_attn;
+
         }
 
         void InitWhisper()
         {
             ROS_INFO("[WHISPER] system_info: n_threads = %d / %d | %s", params.n_threads * params.n_processors, std::thread::hardware_concurrency(), whisper_print_system_info());
             ROS_INFO("[WHISPER] Initializing whisper");
-            wsp_context = whisper_init(params.model.c_str());
+            // wsp_context = whisper_init(params.model.c_str()); -- older version
+            wsp_context=whisper_init_from_file_with_params(params.model.c_str(), cparams);
             if (wsp_context == nullptr)
                 ROS_INFO("[WHISPER] Error: failed to initialize whisper context");
         }
@@ -155,11 +172,12 @@ class WhisperNode
             wparams->thold_pt         = params.word_thold;
             wparams->max_len          = params.max_len;
 
-            wparams->speed_up         = params.speed_up;
+            // wparams->speed_up         = params.speed_up;
 
             wparams->prompt_tokens    = nullptr;
             wparams->prompt_n_tokens  = 0;
         }
+
 
         void ShowResult()
         {

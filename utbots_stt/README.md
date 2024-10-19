@@ -58,4 +58,9 @@ Uses Silero VAD model to perform voice activity detection
 - Program description
 
 Uses whisper.cpp to perform speech recognition
-  
+
+- To run with cuda
+Run:
+```shell
+catkin_make --only-pkg-with-deps whisper_cpp_ros -DGGML_CUDA=1 -DGGML_CCACHE=OFF
+```

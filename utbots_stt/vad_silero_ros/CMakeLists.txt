@@ -57,7 +57,7 @@ ExternalProject_Add(
     CONFIGURE_COMMAND ${RNNOISE_DIR}/configure --srcdir=${RNNOISE_DIR} --prefix=${RNNOISE_BIN} --enable-static=yes  --enable-x86-rtcd --disable-shared
     BUILD_COMMAND cd ${RNNOISE_DIR} && make 
     BUILD_IN_SOURCE 1 
-    #INSTALL_COMMAND # make install
+    #INSTALL_COMMAND cmake -E echo "Skipping install step."
     # BUILD_BYPRODUCTS ${RNNOISE_STATIC_LIB}
 )
 add_library(rnnoise STATIC IMPORTED GLOBAL)
