@@ -25,7 +25,8 @@ typedef struct parameters {
     bool print_progress     = false;
     bool no_timestamps      = false;
     std::string language    = "en";
-    std::string model       = ros::package::getPath("whisper_cpp_ros") + "/models/ggml-tiny.en.bin";
+    std::string model       =  "/models/ggml-tiny.en.bin";
+    // std::string model       = "/models/ggml-large-v3-turbo-q5_0.bin";
 
     // Other parameters
     bool print_timings = false;
@@ -72,22 +73,38 @@ class WhisperNode
         void InitParams()
         {
             ROS_INFO("[WHISPER] Initializing parameters");
-            nh.getParam("/utbots/voice/stt/whisper_node/offset_t_ms",     params.offset_t_ms);
-            nh.getParam("/utbots/voice/stt/whisper_node/duration_ms",     params.duration_ms);
-            nh.getParam("/utbots/voice/stt/whisper_node/max_context",     params.max_context);
-            nh.getParam("/utbots/voice/stt/whisper_node/max_len",         params.max_len);
-            nh.getParam("/utbots/voice/stt/whisper_node/word_thold",      params.word_thold);
-            nh.getParam("/utbots/voice/stt/whisper_node/speed_up",        params.speed_up);
-            nh.getParam("/utbots/voice/stt/whisper_node/translate",       params.translate);
-            nh.getParam("/utbots/voice/stt/whisper_node/print_special",   params.print_special);
-            nh.getParam("/utbots/voice/stt/whisper_node/print_progress",  params.print_progress);
-            nh.getParam("/utbots/voice/stt/whisper_node/no_timestamps",   params.no_timestamps);
-            nh.getParam("/utbots/voice/stt/whisper_node/language",        params.language);
-            nh.getParam("/utbots/voice/stt/whisper_node/model",           params.model);
-            nh.getParam("/utbots/voice/stt/whisper_node/print_timings",   params.print_timings);
-            nh.getParam("/utbots/voice/stt/whisper_node/show_result",     params.show_result);
-            nh.getParam("/utbots/voice/stt/whisper_node/use_gpu",   params.use_gpu);
-            nh.getParam("/utbots/voice/stt/whisper_node/flash_attn",     params.flash_attn);
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/offset_t_ms",     params.offset_t_ms))
+                ROS_INFO("[WHISPER] offset_t_ms found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/duration_ms",     params.duration_ms))
+                ROS_INFO("[WHISPER] duration_ms found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/max_context",     params.max_context))
+                ROS_INFO("[WHISPER] max_context found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/max_len",         params.max_len))
+                ROS_INFO("[WHISPER] max_len found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/word_thold",      params.word_thold))
+                ROS_INFO("[WHISPER] word_thold found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/speed_up",        params.speed_up))
+                ROS_INFO("[WHISPER] speed_up found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/translate",       params.translate))
+                ROS_INFO("[WHISPER] translate found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/print_special",   params.print_special))
+                ROS_INFO("[WHISPER] print_special found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/print_progress",  params.print_progress))
+                ROS_INFO("[WHISPER] print_progress found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/no_timestamps",   params.no_timestamps))
+                ROS_INFO("[WHISPER] no_timestamps found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/language",        params.language))
+                ROS_INFO("[WHISPER] language found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/model",           params.model))
+                ROS_INFO("[WHISPER] model found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/print_timings",   params.print_timings))
+                ROS_INFO("[WHISPER] print_timings found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/show_result",     params.show_result))
+                ROS_INFO("[WHISPER] show_result found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/use_gpu",   params.use_gpu))
+                ROS_INFO("[WHISPER] use_gpu found");
+            if(nh.getParam("/whisper_node/utbots/voice/stt/whisper_node/flash_attn",     params.flash_attn))
+                ROS_INFO("[WHISPER] flash_attn found");
 
             ROS_INFO("[WHISPER] PARAMETERS");
             ROS_INFO("[WHISPER]   - offset_t_ms: %d",       params.offset_t_ms);
@@ -103,6 +120,8 @@ class WhisperNode
             ROS_INFO("[WHISPER]   - language: %s",          params.language.c_str());
             ROS_INFO("[WHISPER]   - model: %s",             params.model.c_str());
             ROS_INFO("[WHISPER]   - show_result: %d\n",     params.show_result);
+            ROS_INFO("[WHISPER]   - use_gpu: %d",           params.use_gpu);
+            ROS_INFO("[WHISPER]   - flash_attn: %d\n",     params.flash_attn);
 
             cparams.use_gpu    = params.use_gpu;
             cparams.flash_attn = params.flash_attn;
@@ -114,7 +133,7 @@ class WhisperNode
             ROS_INFO("[WHISPER] system_info: n_threads = %d / %d | %s", params.n_threads * params.n_processors, std::thread::hardware_concurrency(), whisper_print_system_info());
             ROS_INFO("[WHISPER] Initializing whisper");
             // wsp_context = whisper_init(params.model.c_str()); -- older version
-            wsp_context=whisper_init_from_file_with_params(params.model.c_str(), cparams);
+            wsp_context=whisper_init_from_file_with_params(( ros::package::getPath("whisper_cpp_ros") + params.model).c_str(), cparams);
             if (wsp_context == nullptr)
                 ROS_INFO("[WHISPER] Error: failed to initialize whisper context");
         }

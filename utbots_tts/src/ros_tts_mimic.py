@@ -8,12 +8,16 @@ import shutil
 import pandas
 import time
 from playsound import playsound
-
+import pyaudio
 
 class SpeechSynthesisNode:
 
     # Init
     def __init__(self):
+
+        # self.p = pyaudio.PyAudio()
+        # self.device_index = self.p.get_default_input_device_info()['index']
+
         rospy.init_node('tts', anonymous=True)
         rospy.loginfo("[TTS] Mimic TTS node init")
 
@@ -51,10 +55,10 @@ class SpeechSynthesisNode:
     def Callback(self, msg):
         rospy.loginfo("[TTS] Callback: text is '{}'".format(msg.data))
         self.pub_ttsActivity.publish(Bool(True))
-        self.param_istalking = rospy.set_param("/is_robot_talking", True)
+        self.param_istalking = rospy.set_param("/vad_node/is_robot_talking", True)
         self.TextToSpeech("a " + msg.data)
         self.pub_ttsActivity.publish(Bool(False))
-        self.param_istalking = rospy.set_param("/is_robot_talking", False)
+        self.param_istalking = rospy.set_param("/vad_node/is_robot_talking", False)
 
     # Deletes rows that do not have corresponding wav files
     def DeleteRowsWithoutWavs(self):
@@ -160,6 +164,7 @@ class SpeechSynthesisNode:
 
     # Plays wav file (returns True if succeeds)
     def PlayWav(self, wav):
+        # self.p.set_input_device_volume(self.device_index, 0.0)
         rospy.loginfo("[TTS] Playing {}".format(wav))
         playsound(self.GetWavPath(wav))
         rospy.loginfo("[TTS] Played audio")

@@ -2,7 +2,7 @@
 #define GUARD_VAD_ITERATOR
 
 #include <onnxruntime_cxx_api.h>
-
+// #include <tensorrt_provider_factory.h>
 class VadIterator
 {
     // OnnxRuntime resources
@@ -49,6 +49,12 @@ public:
         // Init threads = 1 for 
         init_engine_threads(1, 1);
         // Load model
+        // Enable CUDA as the execution provider
+        // Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Tensorrt(session_options, 0));
+        // OrtCUDAProviderOptions cuda_options;
+        // session_options.AppendExecutionProvider_CUDA(cuda_options);
+
+    // Load the ONNX model with the updated session options
         session = std::make_shared<Ort::Session>(env, model_path.c_str(), session_options);
     }
 

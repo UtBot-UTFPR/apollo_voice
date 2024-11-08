@@ -24,6 +24,7 @@ include_directories(include/ ${catkin_INCLUDE_DIRS})
 message(STATUS "*** Adding ONNX lib ***")
 add_library(lib_onx SHARED IMPORTED GLOBAL)
 set_target_properties(lib_onx PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/libonnxruntime.so)
+#  ${CMAKE_CURRENT_SOURCE_DIR}/lib/libonnxruntime_providers_cuda.so
 
 # miniaudio library
 message(STATUS "*** Adding miniaudio lib ***")

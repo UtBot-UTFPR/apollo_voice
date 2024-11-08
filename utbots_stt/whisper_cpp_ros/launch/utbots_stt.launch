@@ -8,7 +8,9 @@
     </node>
 
     <node name="whisper_node" pkg="whisper_cpp_ros" type="whisper_node" output="screen">
-        <param name = "/voice/whisper_node/model"           value = "$(find whisper_cpp_ros)/models/ggml-tiny.en.bin" />
+        <!-- <param name = "/voice/whisper_node/model"           value = "$(find whisper_cpp_ros)/models/ggml-tiny.en.bin" /> -->
+        <param name="/utbots/voice/stt/whisper_node/model" value="/models/ggml-large-v3-turbo-q5_0.bin" />
+
         <!-- <param name = "offset_t_ms"     value = "0" />
         <param name = "duration_ms"     value = "0" />
         <param name = "max_context"     value = "-1" />
