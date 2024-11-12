@@ -25,7 +25,7 @@ class SpeechSynthesisNode:
         self.param_voice = rospy.get_param(
             '~voice', default="en_US/hifi-tts_low")
         rospy.loginfo("[TTS] Voice: {}".format(self.param_voice))
-        self.param_istalking = rospy.set_param("/is_robot_talking", False)
+        self.param_istalking = rospy.set_param("/vad_node/is_robot_talking", False)
 
         # Gets path of this package
         self.packagePath = rospkg.RosPack().get_path('utbots_tts')
